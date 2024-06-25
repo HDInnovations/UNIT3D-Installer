@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 export DEBIAN_FRONTEND=noninteractive
+export DEBCONF_NOWARNINGS=yes
 
 source tools/colors.sh
 
@@ -14,7 +15,7 @@ check_locale() {
     echo -e "\n$Cyan Setting UTF8 ...$Color_Off"
 
     apt-get -qq update
-    apt-get install -qq language-pack-en-base > /dev/null
+    apt-get install -qq apt-utils language-pack-en-base > /dev/null
     export LC_ALL=en_US.UTF-8
     export LANG=en_US.UTF-8
     apt-get install -qq software-properties-common > /dev/null
@@ -55,8 +56,8 @@ add_pkgs() {
     # Redis
     echo -e "\n$Cyan Installing Redis ... $Color_Off"
 
-    curl -fsSL https://packages.redis.io/gpg | sudo gpg --dearmor -o /usr/share/keyrings/redis-archive-keyring.gpg
-    echo "deb [signed-by=/usr/share/keyrings/redis-archive-keyring.gpg] https://packages.redis.io/deb $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/redis.list
+    curl -fsSL https://packages.redis.io/gpg | sudo gpg --yes --dearmor -o /usr/share/keyrings/redis-archive-keyring.gpg
+    echo "deb [signed-by=/usr/share/keyrings/redis-archive-keyring.gpg] https://packages.redis.io/deb $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/redis.list > /dev/null
     apt-get -qq update > /dev/null
     apt-get -qq install redis > /dev/null
 
@@ -65,9 +66,8 @@ add_pkgs() {
     # Symlink Redis and Enable
     echo -e "\n$Cyan Symlink and Enabling Redis ... $Color_Off"
 
-    systemctl enable redis-server
-
-    echo -e "$IGreen OK $Color_Off"
+    systemctl -q enable --now redis-server
+    systemctl is-active --quiet redis-server && echo -e "$IGreen OK $Color_Off"||echo -e "$IRed NOK $Color_Off"
 
     # PHP Redis
     echo -e "\n$Cyan Installing PHP Redis ... $Color_Off"
@@ -87,7 +87,7 @@ add_pkgs() {
     echo -e "\n$Cyan Installing Bun ... $Color_Off"
 
     apt-get -qq install unzip > /dev/null
-    curl -fsSL https://bun.sh/install | bash
+    curl -fsSL https://bun.sh/install | bash >/dev/null 2>&1
     mv /root/.bun/bin/bun /usr/local/bin/
     chmod a+x /usr/local/bin/bun
     . ~/.bashrc

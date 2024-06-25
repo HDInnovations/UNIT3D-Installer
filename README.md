@@ -21,6 +21,7 @@ Installer for the [UNIT3D-Community-Edition](https://github.com/HDInnovations/UN
 
 **To install run the following:** (and follow the instructions. must be a fresh deicated server with nothing on it besides supported OS. Also must have a proper valid domain pointing to your server IP via A RECORD and CNAME for www)
 ```
+sudo apt -y install git
 git clone https://github.com/HDInnovations/UNIT3D-Installer.git installer
 cd installer
 sudo ./install.sh

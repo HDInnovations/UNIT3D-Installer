@@ -24,6 +24,7 @@ return [
             'zip' => 'Compress Files',
             'unzip' => 'Decompress Files',
             'htop' => 'Monitor Server Resources',
+            'cron' => 'Process Scheduling Daemon',
         ],
     ]
 
